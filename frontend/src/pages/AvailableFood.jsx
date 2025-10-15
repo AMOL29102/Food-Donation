@@ -157,12 +157,12 @@ const AvailableFood = () => {
       <h1 className="text-4xl md-text-5xl font-bold text-white mb-8 text-center">
         Available <span className="text-green-500">Food</span> Donations
       </h1>
-      {availableFoods.length > 0 ? (
+     {availableFoods.length > 0 ? ( // or posts.length, bookings.length
         <motion.div
           initial="hidden"
           animate="visible"
           variants={{ visible: { transition: { staggerChildren: 0.1 } } }}
-          className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
         >
           {availableFoods.map((food) => (
             <FoodCard key={food._id} food={food} onBook={handleOpenModal} />

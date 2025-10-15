@@ -76,7 +76,7 @@ const MyBookings = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="container mx-auto px-6 py-12"
+      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
     >
       <h1 className="text-4xl md:text-5xl font-bold text-white mb-8 text-center">
         My <span className="text-green-500">Bookings</span>
