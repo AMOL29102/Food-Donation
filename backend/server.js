@@ -18,6 +18,10 @@ app.use(cors());
 // This line allows your server to accept and read JSON from request bodies.
 app.use(express.json());
 
+app.get('/', (req, res) => {
+    res.send('API is running...');
+})
+
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/provider', providerRoutes);
