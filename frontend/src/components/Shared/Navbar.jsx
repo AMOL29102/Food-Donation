@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { FaUserCircle, FaBars, FaTimes } from 'react-icons/fa';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const NavLink = ({ to, children, onClick }) => (
   <Link to={to} onClick={onClick} className="block py-2 px-4 text-gray-300 hover:text-green-500 transition-colors">
