@@ -4,6 +4,26 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaPlusCircle, FaListAlt, FaUtensils, FaBookmark, FaHistory } from 'react-icons/fa';
 
+// **FIX**: Define the ActionCard component here
+const ActionCard = ({ to, icon, title, description }) => {
+  const cardVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { y: 0, opacity: 1 },
+  };
+
+  return (
+    <motion.div variants={cardVariants}>
+      <Link
+        to={to}
+        className="block bg-gray-800 p-8 rounded-lg shadow-lg hover:bg-gray-700 hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 h-full"
+      >
+        <div className="text-green-500 mb-4">{icon}</div>
+        <h3 className="text-2xl font-bold text-white mb-2">{title}</h3>
+        <p className="text-gray-400">{description}</p>
+      </Link>
+    </motion.div>
+  );
+};
 
 const Dashboard = () => {
   const { user } = useAuth();
