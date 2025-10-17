@@ -1,7 +1,7 @@
 import API from './axiosInstance';
 
 // **FIX: Correct API endpoint to fetch available food**
-export const getAvailableFoodRequest = () => API.get('/consumer/available-food');
+export const getAvailableFood = () => API.get('/consumer/available-food');
 
 export const bookFoodRequest = (bookingData) => API.post('/consumer/book', bookingData);
 export const getConsumerBookings = () => API.get('/consumer/bookings');
