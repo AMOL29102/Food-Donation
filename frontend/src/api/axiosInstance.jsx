@@ -2,7 +2,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "https://food-donation-beryl.vercel.app" ||  "http://localhost:5000/api",
+  baseURL: "https://food-donation-beryl.vercel.app/api" ||  "http://localhost:5000/api",
 });
 
 API.interceptors.request.use((req) => {
