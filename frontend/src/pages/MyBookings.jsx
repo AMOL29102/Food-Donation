@@ -2,34 +2,71 @@ import React, { useEffect, useState } from 'react';
 import { getConsumerBookings, cancelBookingRequest } from '../api/consumerApi';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-toastify';
-import { FaUtensils, FaUser, FaClock, FaTrash } from 'react-icons/fa';
+import { FaUtensils, FaUser, FaClock, FaTrash, FaMapMarkerAlt, FaPhone } from 'react-icons/fa';
 
-const BookingCard = ({ booking, onCancel }) => (
-  <motion.div
-    layout
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    exit={{ opacity: 0, y: -20, transition: { duration: 0.3 } }}
-    className="bg-gray-800 p-6 rounded-lg shadow-lg flex flex-col justify-between"
-  >
-    <div>
-      <h3 className="text-2xl font-bold text-white mb-2">{booking.food.title}</h3>
-      <div className="space-y-2 text-gray-300 border-t border-gray-700 pt-4 mt-4">
-        <div className="flex items-center gap-2"><FaUtensils className="text-green-500" /><span>Quantity Booked: {booking.quantity}</span></div>
-        <div className="flex items-center gap-2"><FaUser className="text-green-500" /><span>Provider: {booking.provider.name}</span></div>
-        <div className="flex items-center gap-2"><FaClock className="text-green-500" /><span>Expires: {new Date(booking.food.expiresAt).toLocaleString()}</span></div>
-      </div>
-    </div>
-    <motion.button
-      onClick={() => onCancel(booking._id)}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
-      className="w-full mt-6 bg-red-600 text-white font-bold py-2 px-4 rounded-md hover:bg-red-700 transition-colors flex items-center justify-center gap-2"
+const BookingCard = ({ booking, onCancel }) => {
+  // **FIX: Check if the food item has expired**
+  const isExpired = new Date(booking.food?.expiresAt) < new Date();
+
+  return (
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      // **FIX: Apply different styles for expired cards**
+      className={`h-full bg-gray-800 rounded-lg shadow-lg overflow-hidden flex flex-col ${isExpired ? 'opacity-50' : ''}`}
     >
-      <FaTrash /> Cancel Booking
-    </motion.button>
-  </motion.div>
-);
+      <div className="p-6 flex-grow">
+        <div className="flex justify-between items-start">
+          <h3 className="text-2xl font-bold text-white mb-4">{booking.food?.title}</h3>
+          {/* **FIX: Show an "Expired" badge** */}
+          {isExpired && (
+            <span className="bg-red-500/20 text-red-400 text-xs font-semibold px-2 py-1 rounded-full">
+              Expired
+            </span>
+          )}
+        </div>
+        <div className="space-y-3 text-gray-300 border-t border-gray-700 pt-4">
+          <div className="flex items-center gap-2">
+            <FaUtensils className="text-green-500 flex-shrink-0" />
+            <span>Quantity Booked: {booking.quantity}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <FaUser className="text-green-500 flex-shrink-0" />
+            <span>Provider: {booking.provider?.name}</span>
+          </div>
+          {/* **FIX: Added Provider Contact Number** */}
+          <div className="flex items-center gap-2">
+            <FaPhone className="text-green-500 flex-shrink-0" />
+            <span>Contact: {booking.provider?.mobile}</span>
+          </div>
+          {/* **FIX: Added Provider Address** */}
+          <div className="flex items-start gap-2">
+            <FaMapMarkerAlt className="text-green-500 flex-shrink-0 mt-1" />
+            <span>Address: {booking.provider?.address}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <FaClock className="text-green-500 flex-shrink-0" />
+            <span>Expired On: {new Date(booking.food?.expiresAt || Date.now()).toLocaleString()}</span>
+          </div>
+        </div>
+      </div>
+      <div className="p-6 bg-gray-800/50 border-t border-gray-700">
+        <motion.button
+          onClick={() => onCancel(booking._id)}
+          whileHover={{ scale: isExpired ? 1 : 1.05 }}
+          whileTap={{ scale: isExpired ? 1 : 0.95 }}
+          // **FIX: Disable button for expired bookings**
+          disabled={isExpired}
+          className="w-full bg-red-600 text-white font-bold py-2 px-4 rounded-md transition-colors flex items-center justify-center gap-2 disabled:bg-gray-600 disabled:cursor-not-allowed"
+        >
+          <FaTrash /> Cancel Booking
+        </motion.button>
+      </div>
+    </motion.div>
+  );
+};
 
 const MyBookings = () => {
   const [bookings, setBookings] = useState([]);
@@ -76,21 +113,21 @@ const MyBookings = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+      className="container mx-auto px-4 sm:px-6 py-12"
     >
       <h1 className="text-4xl md:text-5xl font-bold text-white mb-8 text-center">
         My <span className="text-green-500">Bookings</span>
       </h1>
       {bookings.length > 0 ? (
-        <motion.div layout className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 auto-rows-fr">
           <AnimatePresence>
             {bookings.map((booking) => (
               <BookingCard key={booking._id} booking={booking} onCancel={handleCancel} />
             ))}
           </AnimatePresence>
-        </motion.div>
+        </div>
       ) : (
-        <p className="text-center text-gray-400 text-xl mt-16">You have not booked any food items yet.</p>
+        <p className="text-center text-gray-400 text-xl mt-16">You haven't made any bookings yet.</p>
       )}
     </motion.div>
   );

@@ -4,7 +4,7 @@ import API from "./axiosInstance";
 // Fetch all available food posts for consumers
 export const getAvailableFood = async () => {
   // The endpoint to get available food is under the provider routes on the backend
-  const { data } = await API.get("/provider/available");
+  const { data } = await API.get("/consumer/available-food");
   return data;
 };
 
@@ -17,7 +17,7 @@ export const bookFoodRequest = async (foodId, quantity) => {
 
 // Fetch all bookings for the current user
 export const getConsumerBookings = async () => {
-  const { data } = await API.get("/consumer/mybookings");
+  const { data } = await API.get("/consumer/bookings");
   return data;
 };
 

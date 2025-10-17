@@ -1,22 +1,34 @@
 import express from "express";
-import { protect, isProvider } from "../middleware/authMiddleware.js";
+import { protect } from "../middleware/authMiddleware.js";
 import {
-  postFood,
-  getProviderPosts,
+  createFood,
+  getMyPosts, // <-- Import the new function
+  getFoodById,
+  updateFood,
   deleteFood,
-  getFoodByPincode,
-  getBookingHistory
+  getBookingHistory,
 } from "../controllers/providerController.js";
 
 const router = express.Router();
 
-// Note: 'available' food is a public-facing route for consumers, so it only needs 'protect'
-router.get("/available", protect, getFoodByPincode);
+// All routes in this file are protected
+router.use(protect);
 
-// These routes are provider-specific and require the isProvider middleware
-router.post("/post", protect, isProvider, postFood);
-router.get("/myposts", protect, isProvider, getProviderPosts);
-router.delete("/:id", protect, isProvider, deleteFood);
-router.get("/history", protect, isProvider, getBookingHistory); // Add new route for history
+// ** FIX: Define the route to get all posts for the logged-in provider **
+// This was the missing route causing the 404 error
+router.get("/posts", getMyPosts);
+
+// Route to create a new post
+router.post("/posts", createFood);
+
+// Routes for a single post by ID
+router
+  .route("/posts/:id")
+  .get(getFoodById)
+  .put(updateFood)
+  .delete(deleteFood);
+
+// Route for booking history
+router.get("/history", getBookingHistory);
 
 export default router;

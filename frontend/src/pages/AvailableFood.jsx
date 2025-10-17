@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { getAvailableFood, bookFoodRequest } from '../api/consumerApi';
 import { toast } from 'react-toastify';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaUtensils, FaMapMarkerAlt, FaUser, FaClock } from 'react-icons/fa';
+import { FaUtensils, FaMapMarkerAlt, FaUser, FaClock, FaPhone } from 'react-icons/fa';
 
 // Quantity Modal Component
 const QuantityModal = ({ food, onClose, onConfirm }) => {
@@ -60,18 +60,35 @@ const FoodCard = ({ food, onBook }) => {
   };
 
   return (
-    <motion.div
-      variants={cardVariants}
-      className="bg-gray-800 rounded-lg shadow-lg overflow-hidden flex flex-col"
-    >
+    <motion.div variants={cardVariants} className="bg-gray-800 rounded-lg shadow-lg overflow-hidden flex flex-col">
       <div className="p-6 flex-grow">
+       {console.log(food)}
         <h3 className="text-2xl font-bold text-white mb-2">{food.title}</h3>
         <p className="text-gray-400 mb-4">{food.description}</p>
         <div className="space-y-2 text-gray-300">
-          <div className="flex items-center gap-2"><FaUtensils className="text-green-500" /><span>Quantity: {food.quantity}</span></div>
-          <div className="flex items-center gap-2"><FaUser className="text-green-500" /><span>Provider: {food.provider?.name}</span></div>
-          <div className="flex items-center gap-2"><FaMapMarkerAlt className="text-green-500" /><span>Pincode: {food.provider?.pincode}</span></div>
-          <div className="flex items-center gap-2"><FaClock className="text-green-500" /><span>Expires: {new Date(food.expiresAt).toLocaleString()}</span></div>
+          <div className="flex items-center gap-2">
+            <FaUtensils className="text-green-500" />
+            <span>Quantity: {food.quantity}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <FaUser className="text-green-500" />
+            <span>Provider: {food.provider?.name}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <FaPhone className="text-green-500" />
+            <span>Contact: {food.provider?.mobile}</span>
+          </div>
+          <div className="flex items-start gap-2">
+            <FaMapMarkerAlt className="text-green-500 mt-1" />
+            <div>
+              <p>Address:</p>
+              <p className="text-gray-400">{food.provider?.address}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <FaClock className="text-green-500" />
+            <span>Expires: {new Date(food.expiresAt).toLocaleString()}</span>
+          </div>
         </div>
       </div>
       <div className="p-6 bg-gray-800/50">

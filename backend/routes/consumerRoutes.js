@@ -1,16 +1,22 @@
 import express from "express";
 import { protect, isConsumer } from "../middleware/authMiddleware.js";
 import {
+  getAvailableFood,
   bookFood,
   getConsumerBookings,
-  cancelBooking, // Import new controller
+  cancelBooking,
 } from "../controllers/consumerController.js";
 
 const router = express.Router();
 
-// All consumer routes require the user to be a consumer
-router.post("/book/:id", protect, isConsumer, bookFood);
-router.get("/mybookings", protect, isConsumer, getConsumerBookings);
-router.delete("/cancel/:id", protect, isConsumer, cancelBooking); // Add new route for cancelling
+// All routes here are protected
+router.use(protect);
+
+// **FIX: This is the correct route for consumers to get food**
+router.get("/available-food", getAvailableFood);
+
+router.post("/book", bookFood);
+router.get("/bookings", getConsumerBookings);
+router.put("/bookings/:id/cancel", cancelBooking);
 
 export default router;

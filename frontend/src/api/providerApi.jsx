@@ -3,7 +3,7 @@ import API from "./axiosInstance";
 
 // Create a new food post (Provider only)
 export const postFoodRequest = async (foodData) => {
-  const { data } = await API.post("/provider/post", foodData);
+  const { data } = await API.post("/provider/posts", foodData);
   return data;
 };
 

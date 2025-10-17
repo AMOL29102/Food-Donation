@@ -1,68 +1,66 @@
-import React, { createContext, useState, useEffect, useContext } from "react";
-import { signupUser, loginUser, logoutUser } from "../api/authApi";
-import axiosInstance from "../api/axiosInstance";
+import React, { createContext, useState, useContext, useEffect } from "react";
+import { loginUser, signupUser } from "../api/authApi";
+import API from "../api/axiosInstance";
 
-// Create context
-export const AuthContext = createContext();
+const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [token, setToken] = useState(localStorage.getItem("token"));
   const [loading, setLoading] = useState(true);
 
-  // On initial load, check localStorage for auth data
+  // Load from localStorage on app start
   useEffect(() => {
-    const token = localStorage.getItem("token");
     const storedUser = localStorage.getItem("user");
-
-    if (token && storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-        axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-      } catch (err) {
-        console.error("Failed to parse user from localStorage", err);
-        localStorage.removeItem("user");
-        localStorage.removeItem("token");
-      }
+    if (storedUser && token) {
+      setUser(JSON.parse(storedUser));
+      API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     }
     setLoading(false);
-  }, []);
+  }, [token]);
 
-  // Signup function
+  // Signup
   const signup = async (formData) => {
-    try {
-      await signupUser(formData);
-      return true;
-    } catch (err) {
-      console.error(err);
-      return false;
-    }
-  };
-
-  // Login function
-  const login = async (credentials) => {
-    try {
-      const data = await loginUser(credentials); // Expects { user, token }
+    const data = await signupUser(formData);
+    if (data?.user && data?.token) {
+      setUser(data.user);
+      setToken(data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
       localStorage.setItem("token", data.token);
-      setUser(data.user);
-      axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
-      return true;
-    } catch (err) {
-      console.error(err);
-      return false;
+      API.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
     }
+    return data;
   };
 
-  // Logout function
+  // Login
+  const login = async (formData) => {
+    const data = await loginUser(formData);
+
+    console.log("Backend Response:", data);
+
+    if (!data?.user || !data?.token) {
+      console.error("Invalid backend response — user or token missing.");
+      throw new Error("Invalid response from server. Check backend output.");
+    }
+
+    setUser(data.user);
+    setToken(data.token);
+    localStorage.setItem("user", JSON.stringify(data.user));
+    localStorage.setItem("token", data.token);
+    API.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
+    return data;
+  };
+
+  // Logout
   const logout = () => {
-    logoutUser(); // This should handle any server-side logout logic
+    setUser(null);
+    setToken(null);
     localStorage.removeItem("user");
     localStorage.removeItem("token");
-    delete axiosInstance.defaults.headers.common["Authorization"];
-    setUser(null);
+    delete API.defaults.headers.common["Authorization"];
   };
 
-  const value = { user, loading, signup, login, logout };
+  const value = { user, token, login, logout, signup, loading, setUser };
 
   return (
     <AuthContext.Provider value={value}>
@@ -71,7 +69,4 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// Custom hook to use the auth context
-export const useAuth = () => {
-  return useContext(AuthContext);
-};
+export const useAuth = () => useContext(AuthContext);

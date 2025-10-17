@@ -1,6 +1,6 @@
-import Food from "../models/Food.js";
-import Booking from "../models/Booking.js";
-import mongoose from "mongoose";
+import Food from '../models/Food.js';
+import Booking from '../models/Booking.js';
+import mongoose from 'mongoose';
 
 // Book food
 export const bookFood = async (req, res) => {
@@ -60,18 +60,50 @@ export const bookFood = async (req, res) => {
   }
 };
 
-// Get consumer's bookings
+// @desc    Get all available food for a consumer based on their pincode
+// @route   GET /api/consumer/available-food
+// @access  Private
+export const getAvailableFood = async (req, res) => {
+  try {
+    const foods = await Food.find({
+      pincode: req.user.pincode,
+      quantity: { $gt: 0 },
+      expiresAt: { $gt: new Date() }
+    })
+    .populate('provider', 'name address mobile')
+    .sort({ createdAt: -1 });
+    
+    res.json(foods);
+  } catch (error) {
+    console.error("Error fetching available food:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// Get all ACTIVE bookings for the logged-in consumer
 export const getConsumerBookings = async (req, res) => {
   try {
-    const bookings = await Booking.find({ consumer: req.user._id, status: 'Booked' })
-      .populate({
-        path: 'food',
-        select: 'title description expiresAt',
-      })
-      .populate('provider', 'name')
-      .sort({ bookedAt: -1 });
+    // **FIX: Use an aggregation pipeline to get bookings only for non-expired food**
+    const bookings = await Booking.aggregate([
+      { $match: { consumer: new mongoose.Types.ObjectId(req.user._id) } },
+      { $lookup: { from: 'foods', localField: 'food', foreignField: '_id', as: 'foodDetails' } },
+      { $unwind: '$foodDetails' },
+      { $match: { 'foodDetails.expiresAt': { $gt: new Date() } } }, // Filter out expired
+      { $lookup: { from: 'users', localField: 'provider', foreignField: '_id', as: 'providerDetails' } },
+      { $unwind: '$providerDetails' },
+      {
+        $project: {
+          _id: 1, quantity: 1, createdAt: 1,
+          food: { _id: '$foodDetails._id', title: '$foodDetails.title', expiresAt: '$foodDetails.expiresAt' },
+          provider: { _id: '$providerDetails._id', name: '$providerDetails.name', address: '$providerDetails.address', mobile: '$providerDetails.mobile' }
+        }
+      },
+      { $sort: { createdAt: -1 } }
+    ]);
+
     res.json(bookings);
   } catch (error) {
+    console.error("Error fetching consumer bookings:", error);
     res.status(500).json({ message: "Server error" });
   }
 };

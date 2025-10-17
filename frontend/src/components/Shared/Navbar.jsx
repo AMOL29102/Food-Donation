@@ -118,6 +118,7 @@ const Navbar = () => {
                       <NavLink to="/booking-history" onClick={closeMenu}>History</NavLink>
                     </>
                   )}
+                  <NavLink to="/profile" className={({ isActive }) => isActive ? "text-green-500" : "hover:text-green-500"}>Profile</NavLink>
                   <button onClick={handleLogout} className="w-full text-left bg-red-600/20 text-red-400 my-2 mx-4 px-4 py-2 rounded-md hover:bg-red-600/40 transition-colors font-semibold">
                     Logout
                   </button>
