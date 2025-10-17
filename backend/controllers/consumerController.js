@@ -84,7 +84,7 @@ export const getAvailableFood = async (req, res) => {
 export const getConsumerBookings = async (req, res) => {
   try {
     // **FIX: Use an aggregation pipeline to get bookings only for non-expired food**
-    const bookings = await Booking.aggregate([
+    const bookings = await Booking?.aggregate([
       { $match: { consumer: new mongoose.Types.ObjectId(req.user._id) } },
       { $lookup: { from: 'foods', localField: 'food', foreignField: '_id', as: 'foodDetails' } },
       { $unwind: '$foodDetails' },

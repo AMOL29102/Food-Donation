@@ -93,7 +93,7 @@ const MyBookings = () => {
       try {
         await cancelBookingRequest(bookingId);
         toast.success('Booking cancelled successfully!');
-        setBookings(bookings.filter(b => b._id !== bookingId));
+        setBookings(bookings?.filter(b => b._id !== bookingId));
       } catch (error) {
         toast.error('Failed to cancel booking.');
       }

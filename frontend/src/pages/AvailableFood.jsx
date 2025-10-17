@@ -152,7 +152,7 @@ const AvailableFood = () => {
     );
   }
 
-  const availableFoods = foods.filter(food => food.quantity > 0);
+  const availableFoods = foods?.filter(food => food.quantity > 0);
 
   return (
     <motion.div

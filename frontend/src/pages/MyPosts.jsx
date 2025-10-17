@@ -72,7 +72,7 @@ const MyPosts = () => {
     if (window.confirm("Are you sure you want to delete this post?")) {
       try {
         await deletePostRequest(id);
-        setPosts(posts.filter(p => p._id !== id));
+        setPosts(posts?.filter(p => p._id !== id));
         toast.success("Post deleted successfully.");
       } catch (error) {
         toast.error("Failed to delete post.");
