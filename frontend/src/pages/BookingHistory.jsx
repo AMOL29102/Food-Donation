@@ -11,7 +11,7 @@ const BookingHistory = () => {
     const fetchHistory = async () => {
       try {
         setLoading(true);
-        const data = await getBookingHistoryRequest();
+        const {data} = await getBookingHistoryRequest();
         setHistory(data);
       } catch (error) {
         toast.error("Failed to fetch booking history.");
