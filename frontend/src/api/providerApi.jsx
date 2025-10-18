@@ -1,26 +1,19 @@
-// src/api/providerApi.js
-import API from "./axiosInstance";
+import API from './axiosInstance';
 
-// Create a new food post (Provider only)
-export const postFoodRequest = async (foodData) => {
-  const { data } = await API.post("/provider/posts", foodData);
-  return data;
-};
+// Get all posts for the logged-in provider
+export const getMyPostsRequest = () => API.get('/provider/posts');
 
-// Fetch Provider's own posts
-export const getProviderPosts = async () => {
-  const { data } = await API.get("/provider/myposts");
-  return data;
-};
+// Create a new food post
+export const createPostRequest = (postData) => API.post('/provider/posts', postData);
 
-// Fetch Provider's booking history
-export const getBookingHistoryRequest = async () => {
-  const { data } = await API.get("/provider/history");
-  return data;
-};
+// Get a single post by its ID
+export const getPostByIdRequest = (id) => API.get(`/provider/posts/${id}`);
 
-// Delete a specific food post (Provider)
-export const deleteFoodRequest = async (id) => {
-  const { data } = await API.delete(`/provider/${id}`);
-  return data;
-};
+// Update an existing post
+export const updatePostRequest = (id, postData) => API.put(`/provider/posts/${id}`, postData);
+
+// Delete a post
+export const deletePostRequest = (id) => API.delete(`/provider/posts/${id}`);
+
+// Get booking history for the provider
+export const getBookingHistoryRequest = () => API.get('/provider/history');

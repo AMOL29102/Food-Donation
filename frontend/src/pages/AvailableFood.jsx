@@ -152,7 +152,9 @@ const AvailableFood = () => {
     );
   }
 
-  const availableFoods = foods?.filter(food => food.quantity > 0);
+  const availableFoods = Array.isArray(foods)
+  ? foods.filter(food => food.quantity > 0)
+  : [];
 
   return (
     <motion.div
@@ -174,7 +176,7 @@ const AvailableFood = () => {
       <h1 className="text-4xl md-text-5xl font-bold text-white mb-8 text-center">
         Available <span className="text-green-500">Food</span> Donations
       </h1>
-     {availableFoods.length > 0 ? ( // or posts.length, bookings.length
+     {availableFoods?.length > 0 ? ( // or posts.length, bookings.length
         <motion.div
           initial="hidden"
           animate="visible"
