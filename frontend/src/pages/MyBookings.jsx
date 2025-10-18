@@ -75,7 +75,7 @@ const MyBookings = () => {
   const fetchBookings = async () => {
     try {
       setLoading(true);
-      const data = await getConsumerBookings();
+      const {data} = await getConsumerBookings();
       setBookings(data);
     } catch (error) {
       toast.error("Failed to fetch your bookings.");

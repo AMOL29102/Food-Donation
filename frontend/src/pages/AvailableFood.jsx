@@ -113,7 +113,8 @@ const AvailableFood = () => {
   const fetchAvailableFood = async () => {
     try {
       setLoading(true);
-      const data = await getAvailableFood();
+      const {data} = await getAvailableFood();
+      // console.log(Array.isArray(data));
       setFoods(data);
     } catch (error) {
       toast.error('Failed to fetch available food.');
@@ -135,7 +136,10 @@ const AvailableFood = () => {
     if (!selectedFood) return;
 
     try {
-      await bookFoodRequest(selectedFood._id, quantity);
+
+      console.log(selectedFood._id, quantity)
+      const foodId = selectedFood._id; 
+      await bookFoodRequest({foodId, quantity});
       toast.success('Food booked successfully!');
       setSelectedFood(null); // Close the modal
       fetchAvailableFood(); // Refresh the list
@@ -152,9 +156,7 @@ const AvailableFood = () => {
     );
   }
 
-  const availableFoods = Array.isArray(foods)
-  ? foods.filter(food => food.quantity > 0)
-  : [];
+  // const availableFoods = foods?.filter(food => food.quantity > 0);
 
   return (
     <motion.div
@@ -176,14 +178,14 @@ const AvailableFood = () => {
       <h1 className="text-4xl md-text-5xl font-bold text-white mb-8 text-center">
         Available <span className="text-green-500">Food</span> Donations
       </h1>
-     {availableFoods?.length > 0 ? ( // or posts.length, bookings.length
+     {foods?.length > 0 ? ( // or posts.length, bookings.length
         <motion.div
           initial="hidden"
           animate="visible"
           variants={{ visible: { transition: { staggerChildren: 0.1 } } }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
         >
-          {availableFoods.map((food) => (
+          {foods?.map((food) => (
             <FoodCard key={food._id} food={food} onBook={handleOpenModal} />
           ))}
         </motion.div>

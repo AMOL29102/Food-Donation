@@ -3,9 +3,8 @@ import Booking from '../models/Booking.js';
 import mongoose from 'mongoose';
 
 // Book food
-export const bookFood = async (req, res) => {
-  const { quantity } = req.body;
-  const foodId = req.params.id;
+export const createBooking = async (req, res) => {
+   const { foodId, quantity } = req.body;
   const consumerId = req.user._id;
 
   console.log(quantity," ",foodId," ",consumerId);
@@ -72,6 +71,8 @@ export const getAvailableFood = async (req, res) => {
     })
     .populate('provider', 'name address mobile')
     .sort({ createdAt: -1 });
+
+    console.log(foods)
     
     res.json(foods);
   } catch (error) {
@@ -100,6 +101,8 @@ export const getConsumerBookings = async (req, res) => {
       },
       { $sort: { createdAt: -1 } }
     ]);
+
+    console.log(bookings)
 
     res.json(bookings);
   } catch (error) {
